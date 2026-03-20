@@ -2,12 +2,13 @@ import pandas as pd
 from pathlib import Path
 import operations.save_as_csv as save_as_csv
 import utils.cli_input_utils as cli_input
+from utils.cli_output_utils import print_plain, print_good, print_bad, print_warning
 
 OPTION_ANY_COLUMN_HAS_NULL = "Save rows where any column has a null value in a separate file"
 OPTION_USER_SELECTED_COLUMNS_HAS_NULL = "Save rows where null exists in selected columns only in a separate file"
 
 def apply(df: pd.DataFrame, output_dir: Path, step_count: int) -> pd.DataFrame:
-    print("Separate Null Values:")
+    print_plain("Separate Null Values:")
     option = cli_input.ask_option(
         "Select null separation option",
         [
@@ -28,7 +29,7 @@ def apply(df: pd.DataFrame, output_dir: Path, step_count: int) -> pd.DataFrame:
         null_mask = df[selected_columns].isnull().any(axis=1)
         file_name = f"step_{step_count}_null_rows_selected_columns.csv"
     else:
-        print("Invalid option. No changes applied.")
+        print_warning("Invalid option. No changes applied.")
         return df
 
     null_rows_df = df[null_mask]
@@ -38,7 +39,7 @@ def apply(df: pd.DataFrame, output_dir: Path, step_count: int) -> pd.DataFrame:
         step_count,
         file_name=file_name,
     )
-    print(f"Saved {null_rows_df.shape[0]} rows with null values to: {output_path}")
+    print_good(f"Saved {null_rows_df.shape[0]} rows with null values to: {output_path}")
 
     proceed_with_remaining = cli_input.ask_yes_no(
         "Proceed with remaining rows only? Enter 'no' to continue with original dataset including null rows",
@@ -46,10 +47,10 @@ def apply(df: pd.DataFrame, output_dir: Path, step_count: int) -> pd.DataFrame:
     )
 
     if not proceed_with_remaining:
-        print("Continuing with original dataset.")
+        print_plain("Continuing with original dataset.")
         return df
 
     index_to_drop = null_rows_df.index
     filtered_df = df.drop(index=index_to_drop)
-    print(f"Continuing with filtered dataset. Remaining rows: {filtered_df.shape[0]}")
+    print_plain(f"Continuing with filtered dataset. Remaining rows: {filtered_df.shape[0]}")
     return filtered_df

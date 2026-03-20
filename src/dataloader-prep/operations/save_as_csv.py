@@ -2,10 +2,11 @@ import pandas as pd
 from pathlib import Path    
 import csv
 import utils.cli_input_utils as cli_input
+from utils.cli_output_utils import print_plain, print_good, print_bad, print_warning
 
 def apply(df: pd.DataFrame, output_dir: Path, step_count: int, file_name: str = None) -> Path:
     default_file_name = f"step_{step_count}_save_as_csv.csv"
-    print(f"Saving DataFrame to UTF-8 CSV file: {output_dir}")
+    print_plain(f"Saving DataFrame to UTF-8 CSV file: {output_dir}")
 
     if file_name is None:
         file_name = cli_input.ask_text(
@@ -30,5 +31,5 @@ def apply(df: pd.DataFrame, output_dir: Path, step_count: int, file_name: str = 
         encoding='utf-8',
     )
 
-    print(f"Data saved to CSV file: {output_path}")
+    print_good(f"Data saved to CSV file: {output_path}")
     return output_path

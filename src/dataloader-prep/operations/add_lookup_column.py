@@ -3,14 +3,15 @@ import pandas as pd
 import operations.load_file as load_file
 import operations.save_as_csv as save_as_csv
 import utils.cli_input_utils as cli_input
+from utils.cli_output_utils import print_plain, print_good, print_bad, print_warning
 
 LOOKUP_DIR = Path("lookup")
 
 def apply(df: pd.DataFrame, output_dir: Path, step_count: int) -> pd.DataFrame:
-    print("Add Lookup Column:")
+    print_plain("Add Lookup Column:")
     new_column_name = cli_input.ask_text("Enter name for the new column")
     if not new_column_name:
-        print("Column name cannot be empty. No changes applied.")
+        print_warning("Column name cannot be empty. No changes applied.")
         return df
 
     if new_column_name in df.columns:
@@ -19,7 +20,7 @@ def apply(df: pd.DataFrame, output_dir: Path, step_count: int) -> pd.DataFrame:
             default=False,
         )
         if not replace_existing:
-            print("No changes applied.")
+            print_warning("No changes applied.")
             return df
 
     target_key_column = _read_column_name(
@@ -33,7 +34,7 @@ def apply(df: pd.DataFrame, output_dir: Path, step_count: int) -> pd.DataFrame:
 
     source_df = load_file.apply(str(source_file), output_dir)
     if source_df.empty:
-        print("Lookup source file is empty. No changes applied.")
+        print_warning("Lookup source file is empty. No changes applied.")
         return df
 
     source_key_column = _read_column_name(
@@ -52,10 +53,10 @@ def apply(df: pd.DataFrame, output_dir: Path, step_count: int) -> pd.DataFrame:
     )
 
     df[new_column_name] = df[target_key_column].map(lookup_series)
-    print(f"Lookup column '{new_column_name}' added to dataset")
+    print_good(f"Lookup column '{new_column_name}' added to dataset")
     null_count = df[new_column_name].isnull().sum()
     total_count = df[new_column_name].size
-    print(
+    print_warning(
         f"** Null values in '{new_column_name}': {null_count} out of {total_count} rows"
     )
 
@@ -74,7 +75,7 @@ def _read_column_name(columns: pd.Index, prompt: str) -> str:
 
 def _select_lookup_file() -> Path | None:
     if not LOOKUP_DIR.exists() or not LOOKUP_DIR.is_dir():
-        print(
+        print_bad(
             f"Lookup directory '{LOOKUP_DIR}' does not exist. "
             "Create it and add lookup files."
         )
@@ -87,7 +88,7 @@ def _select_lookup_file() -> Path | None:
     )
 
     if not lookup_files:
-        print(
+        print_bad(
             f"No lookup files found in '{LOOKUP_DIR}'. "
             "Add .csv or .xlsx files and try again."
         )

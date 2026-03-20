@@ -9,6 +9,7 @@ from pathlib import Path
 import datetime
 import os
 import sys
+from utils.cli_output_utils import print_plain, print_good, print_bad, print_warning
 
 OPERATION_SAVE_AS_CSV = 'Save as CSV'
 OPERATION_SHOW_SUMMARY = 'Show Summary'
@@ -18,29 +19,37 @@ OPERATION_ADD_LOOKUP_COLUMN = 'Add Lookup Column'
 OPERATION_EXIT = 'Exit'
 
 def main():
-    print('Pre-processing data...')
+    print_plain('Pre-processing data...')
 
     # Input File
     if len(sys.argv) < 2:
-        exit("Usage: dataloader-prep <input_file>")
+        print_bad("Usage: dataloader-prep <input_file>")
+        exit(1)
     input_file_name = sys.argv[1]
     input_file = Path(input_file_name)
     if(not input_file.exists()):
-        exit(f"File {input_file_name} does not exist")
+        print_bad(f"File {input_file_name} does not exist")
+        exit(1)
 
     file_size = input_file.stat().st_size
     if(file_size == 0):
-        exit(f"File {input_file_name} is empty")
+        print_bad(f"File {input_file_name} is empty")
+        exit(1)
 
-    print(f"File {input_file_name} size: {file_size/1024/1024} MB")
+    print_plain(f"File {input_file_name} size: {file_size/1024/1024} MB")
 
     # Set Ouput Directory
     EXECUTION_ID=datetime.datetime.now().strftime('%m%d_%H%M%S')
-    OUTPUT_DIR = Path('dataloader-prep-output') / EXECUTION_ID
+    # INSERT_YOUR_CODE
+    OUTPUT_FOLDER_PREFIX = cli_input.ask_text(
+        "Enter output directory suffix for your reference (e.g. object name, Jira ticket, etc)",
+        default="task",
+    )
+    OUTPUT_DIR = Path('dataloader-prep-output') / f"{OUTPUT_FOLDER_PREFIX}_{EXECUTION_ID}"
     os.makedirs(OUTPUT_DIR, exist_ok=True)
+    print_good(f"All the generated files will be saved in: {OUTPUT_DIR}")
 
     df = load_file.apply(input_file_name, OUTPUT_DIR)
-    print('File loaded successfully')
     show_summary.apply(df)
 
     available_operations = [

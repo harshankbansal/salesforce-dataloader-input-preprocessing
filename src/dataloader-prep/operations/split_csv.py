@@ -3,6 +3,7 @@ from pathlib import Path
 import pandas as pd
 import operations.save_as_csv as save_as_csv
 import utils.cli_input_utils as cli_input
+from utils.cli_output_utils import print_plain, print_good, print_bad, print_warning
 
 
 def apply(df: pd.DataFrame, output_dir: Path, step_count: int) -> None:
@@ -15,7 +16,7 @@ def apply(df: pd.DataFrame, output_dir: Path, step_count: int) -> None:
     )
     total_files = math.ceil(total_rows / records_per_file)
 
-    print(f"Splitting {total_rows} rows into {total_files} file(s)")
+    print_plain(f"Splitting {total_rows} rows into {total_files} file(s)")
 
     for part_index in range(total_files):
         start_index = part_index * records_per_file
@@ -28,5 +29,6 @@ def apply(df: pd.DataFrame, output_dir: Path, step_count: int) -> None:
             step_count,
             file_name=file_name,
         )
+        print_plain(f"Split file {part_index + 1} of {total_files} saved to: {output_dir}")
 
-    print(f"Split complete. Files saved to: {output_dir}")
+    print_good(f"Split complete. Files saved to: {output_dir}")

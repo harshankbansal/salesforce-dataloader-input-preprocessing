@@ -2,6 +2,7 @@ import pandas as pd
 from pathlib import Path
 import csv
 import utils.cli_input_utils as cli_input
+from utils.cli_output_utils import print_plain, print_good, print_bad, print_warning
 
 def apply(file_path: str, output_dir: Path) -> pd.DataFrame:
     if(file_path.lower().endswith('.xlsx')):
@@ -12,16 +13,19 @@ def apply(file_path: str, output_dir: Path) -> pd.DataFrame:
         raise ValueError(f"Unsupported file type: {file_path}")
 
 def load_xlsx(file_path: str, output_dir: Path) -> pd.DataFrame:
+    print_plain(f"Reading Excel File: {file_path}")
     file = pd.ExcelFile(file_path)
     sheets = file.sheet_names
     if(len(sheets) == 1):
-        return file.parse(sheets[0])
+        selected_sheet = sheets[0]
     else:
         selected_sheet = cli_input.ask_option(
             "Please select a sheet",
             sheets,
         )
-        return file.parse(selected_sheet)
+    df = file.parse(selected_sheet)
+    print_good(f"File loaded successfully. Total rows: {df.shape[0]}")
+    return df
 
 def load_csv(file_path: str, output_dir: Path) -> pd.DataFrame:
     SEPARATOR = ','
@@ -30,9 +34,14 @@ def load_csv(file_path: str, output_dir: Path) -> pd.DataFrame:
     DOUBLEQUOTE = True
     ENCODING = 'utf-8'
 
-    print('Reading CSV File...')
-    show_head = cli_input.ask_yes_no("Show head", default=False)
+    print_plain(f"Reading CSV File: {file_path}")
+    show_head = cli_input.ask_yes_no("Show head?", default=False)
     if show_head:
+        encoding = cli_input.ask_text(
+            "Please select the encoding for the file",
+            default=ENCODING,
+        )
+        ENCODING = encoding
         _show_file_head(file_path, n_lines=3, encoding=ENCODING)
 
     # Show default values and ask if user wants to update
@@ -43,7 +52,7 @@ def load_csv(file_path: str, output_dir: Path) -> pd.DataFrame:
     Quoting: {QUOTING}
     Doublequote: {DOUBLEQUOTE}
     Encoding: {ENCODING}
-    Do you want to keep these default values? (Y/n)
+    Do you want to keep these default values?
     """
     keep_default = cli_input.ask_yes_no(
         keep_default_prompt.strip(),
@@ -68,15 +77,16 @@ def load_csv(file_path: str, output_dir: Path) -> pd.DataFrame:
         except ValueError:
             print(f"Invalid quoting value '{quoting_str}'. Keeping default: {QUOTING}")
 
-        doublequote_text = cli_input.ask_text(
-            "Please select the doublequote (true/false)",
+        doublequote_text = cli_input.ask_yes_no(
+            "Does CSV use double quotes for quotes within values?",
             default=str(DOUBLEQUOTE),
         )
         DOUBLEQUOTE = doublequote_text.strip().lower() in ("1", "true", "t", "yes", "y")
-        ENCODING = cli_input.ask_text(
-            "Please select the encoding",
-            default=ENCODING,
-        )
+        if not encoding:
+            ENCODING = cli_input.ask_text(
+                "Please select the encoding",
+                default=ENCODING,
+            )
 
     CSV_FILE_PROPERTIES = {
         'sep': SEPARATOR,
@@ -85,7 +95,7 @@ def load_csv(file_path: str, output_dir: Path) -> pd.DataFrame:
         'doublequote': DOUBLEQUOTE,
     }
 
-    return pd.read_csv(
+    df = pd.read_csv(
         file_path,
         encoding=ENCODING,
         dtype=str,
@@ -94,9 +104,11 @@ def load_csv(file_path: str, output_dir: Path) -> pd.DataFrame:
         on_bad_lines=lambda bad_line: _read_csv_save_bad_lines(bad_line, output_dir, ENCODING),
         **CSV_FILE_PROPERTIES
     )
+    print_good(f"File loaded successfully. Total rows: {df.shape[0]}")
+    return df
 
 def _read_csv_save_bad_lines(bad_line: list[str], output_dir: Path, encoding: str) -> None:
-    print('Bad line Detected')
+    print_bad('Bad line Detected')
     with open(output_dir/'lines_unable_to_load.csv', 'a', encoding=encoding) as file:
         line = ','.join(bad_line)
         file.write(line + '\n')       
@@ -106,4 +118,4 @@ def _show_file_head(file_path: str, n_lines: int = 3, encoding: str = 'utf-8') -
         for i, line in enumerate(file):
             if i >= n_lines:
                 break
-            print(line)
+            print(line, end='')
