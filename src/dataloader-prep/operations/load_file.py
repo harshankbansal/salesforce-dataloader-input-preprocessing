@@ -2,7 +2,8 @@ import pandas as pd
 from pathlib import Path
 import csv
 import utils.cli_input_utils as cli_input
-from utils.cli_output_utils import print_plain, print_good, print_bad, print_warning
+from utils.cli_output_utils import print_plain, print_good, print_bad, print_warning, print_info
+from charset_normalizer import from_bytes
 
 def apply(file_path: str, output_dir: Path) -> pd.DataFrame:
     if(file_path.lower().endswith('.xlsx')):
@@ -32,16 +33,23 @@ def load_csv(file_path: str, output_dir: Path) -> pd.DataFrame:
     QUOTECHAR = '"'
     QUOTING = csv.QUOTE_ALL
     DOUBLEQUOTE = True
-    ENCODING = 'utf-8'
+
+    print_plain('Detecting encoding...')
+    with open(file_path, 'rb') as f:
+        bytes = f.read(2 * 1024 * 1024)
+    result = from_bytes(bytes).best()
+    print_info(f"Detected encoding: {result.encoding}. Encoding also known as: {result.encoding_aliases}.")
+    print_warning("!!IMPORTANT!! DETECTED ENCODING MAY NOT BE CORRECT. PLEASE VERIFY THE ENCODING BEFORE USING IT.")
+    
+    ENCODING = cli_input.ask_text(
+            f"Press enter to keep detected encoding or enter the encoding you want to use",
+            default=result.encoding,
+        )
 
     print_plain(f"Reading CSV File: {file_path}")
     show_head = cli_input.ask_yes_no("Show head?", default=False)
     if show_head:
-        encoding = cli_input.ask_text(
-            "Please select the encoding for the file",
-            default=ENCODING,
-        )
-        ENCODING = encoding
+        
         _show_file_head(file_path, n_lines=3, encoding=ENCODING)
 
     # Show default values and ask if user wants to update
@@ -51,7 +59,6 @@ def load_csv(file_path: str, output_dir: Path) -> pd.DataFrame:
     Quotechar: {QUOTECHAR}
     Quoting: {QUOTING}
     Doublequote: {DOUBLEQUOTE}
-    Encoding: {ENCODING}
     Do you want to keep these default values?
     """
     keep_default = cli_input.ask_yes_no(
@@ -82,12 +89,7 @@ def load_csv(file_path: str, output_dir: Path) -> pd.DataFrame:
             default=str(DOUBLEQUOTE),
         )
         DOUBLEQUOTE = doublequote_text.strip().lower() in ("1", "true", "t", "yes", "y")
-        if not encoding:
-            ENCODING = cli_input.ask_text(
-                "Please select the encoding",
-                default=ENCODING,
-            )
-
+        
     CSV_FILE_PROPERTIES = {
         'sep': SEPARATOR,
         'quotechar': QUOTECHAR,

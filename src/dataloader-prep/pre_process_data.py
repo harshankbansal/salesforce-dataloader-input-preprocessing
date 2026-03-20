@@ -9,7 +9,7 @@ from pathlib import Path
 import datetime
 import os
 import sys
-from utils.cli_output_utils import print_plain, print_good, print_bad, print_warning
+from utils.cli_output_utils import print_plain, print_good, print_bad, print_warning, print_info
 
 OPERATION_SAVE_AS_CSV = 'Save as CSV'
 OPERATION_SHOW_SUMMARY = 'Show Summary'
@@ -47,7 +47,7 @@ def main():
     )
     OUTPUT_DIR = Path('dataloader-prep-output') / f"{OUTPUT_FOLDER_PREFIX}_{EXECUTION_ID}"
     os.makedirs(OUTPUT_DIR, exist_ok=True)
-    print_good(f"All the generated files will be saved in: {OUTPUT_DIR}")
+    print_info(f"All the generated files will be saved in: {OUTPUT_DIR}")
 
     df = load_file.apply(input_file_name, OUTPUT_DIR)
     show_summary.apply(df)
