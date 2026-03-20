@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "salesforce-dataloader-preprocess-cli"
+version = "0.1.0"
+description = "Interactive CSV/XLSX preprocessing CLI for Salesforce dataloader inputs."
+requires-python = ">=3.10"
+dependencies = [
+  "pandas",
+  "openpyxl",
+]
+
+[project.scripts]
+dataloader-prep = "pre_process_data:main"
+
+[tool.setuptools]
+package-dir = {"" = "src/dataloader-prep"}
+py-modules = ["pre_process_data"]
+
+[tool.setuptools.packages.find]
+where = ["src/dataloader-prep"]
+include = ["operations*", "utils*"]
+namespaces = true

@@ -1,0 +1,28 @@
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+venv/
+.venv/
+
+# VSCode and Cursor IDE settings
+.vscode/
+.cursor/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Data and output directories
+data/
+output/
+files_for_ai_prompt/
+
+#pipx build
+build/
+*egg-info/
+
+*ipynb
