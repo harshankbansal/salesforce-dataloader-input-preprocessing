@@ -24,7 +24,7 @@ def load_xlsx(file_path: str, output_dir: Path) -> pd.DataFrame:
             "Please select a sheet",
             sheets,
         )
-    df = file.parse(selected_sheet)
+    df = pd.read_excel(file_path, sheet_name=selected_sheet, dtype=str)
     print_good(f"File loaded successfully. Total rows: {df.shape[0]}")
     return df
 
