@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "salesforce-dataloader-preprocess-cli"
-version = "0.1.0"
+version = "0.2.0"
 description = "Interactive CSV/XLSX preprocessing CLI for Salesforce dataloader inputs."
 requires-python = ">=3.10"
 dependencies = [
