@@ -1,3 +1,4 @@
 pandas
 openpyxl 
 charset-normalizer
+tabulate
