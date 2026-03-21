@@ -20,4 +20,5 @@ def show_df_columns(df: pd.DataFrame) -> None:
     print_plain('Column breakdown:')
     summary = df.describe().T
     summary['null_count'] = df[summary.index].isnull().sum()
-    print(tabulate(summary, tablefmt = 'grid', headers = summary.columns, maxcolwidths=50))
+    cols_order = ['count', 'unique', 'null_count', 'top', 'freq']
+    print(tabulate(summary[cols_order], tablefmt = 'grid', headers = cols_order, maxcolwidths=80))
