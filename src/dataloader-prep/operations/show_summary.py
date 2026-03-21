@@ -20,7 +20,7 @@ def show_df_columns(df: pd.DataFrame) -> None:
     
     print_plain('Column breakdown:')
     col_width = max(len(col) for col in df.columns) + 2
-    header = f"{'Column':<{col_width}} {'Total Values':>15} {'Null Values':>15} {'Unique Values (non null)':>30} {'Most Frequent Value':>25}"
+    header = f"{'Column':<{col_width}} {'Total Values':>13} {'Null Values':>12} {'Non-null Unique':>17} {'Most Frequent Value':>25}"
     print_plain(header)
     print_plain('-' * len(header))
     for column in df.columns:
@@ -29,5 +29,5 @@ def show_df_columns(df: pd.DataFrame) -> None:
             mode = '<All values are null>'
         else:
             mode = mode[0]
-        print_plain(f"{column:<{col_width}} {df[column].size:>15} {df[column].isnull().sum():>15} {df[column].nunique():>30} {mode:>25}")
+        print_plain(f"{column:<{col_width}} {df[column].size:>13} {df[column].isnull().sum():>12} {df[column].nunique():>17} {mode:>25}")
     print_plain('-' * len(header))
