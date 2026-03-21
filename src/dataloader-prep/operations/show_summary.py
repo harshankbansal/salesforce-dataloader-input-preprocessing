@@ -7,7 +7,7 @@ def apply(df: pd.DataFrame) -> None:
     show_df_columns(df)
 
 def show_df_overview(df: pd.DataFrame) -> None:
-    print_plain('-'*20 + ' DataFrame Overview ' + '-'*20)
+    print_plain('DataFrame Overview:')
     overview = pd.DataFrame({
         'Total rows': [df.shape[0]],
         'Total columns': [df.shape[1]],
@@ -17,8 +17,7 @@ def show_df_overview(df: pd.DataFrame) -> None:
 
 
 def show_df_columns(df: pd.DataFrame) -> None:
-    print_plain('-'*20 + ' Column breakdown ' + '-'*20)
-
+    print_plain('Column breakdown:')
     summary = df.describe().T
     summary['null_count'] = df[summary.index].isnull().sum()
-    print(tabulate(summary, tablefmt = 'psql', headers = summary.columns))
+    print(tabulate(summary, tablefmt = 'grid', headers = summary.columns, maxcolwidths=50))
