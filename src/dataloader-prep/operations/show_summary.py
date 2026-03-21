@@ -24,5 +24,10 @@ def show_df_columns(df: pd.DataFrame) -> None:
     print_plain(header)
     print_plain('-' * len(header))
     for column in df.columns:
-        print_plain(f"{column:<{col_width}} {df[column].size:>15} {df[column].isnull().sum():>15} {df[column].nunique():>30} {df[column].mode(dropna=True)[0]:>25}")
+        mode = df[column].mode(dropna=True)
+        if mode.empty:
+            mode = '<All values are null>'
+        else:
+            mode = mode[0]
+        print_plain(f"{column:<{col_width}} {df[column].size:>15} {df[column].isnull().sum():>15} {df[column].nunique():>30} {mode:>25}")
     print_plain('-' * len(header))
