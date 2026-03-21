@@ -6,7 +6,6 @@ from utils.cli_output_utils import print_plain, print_good, print_bad, print_war
 
 def apply(df: pd.DataFrame, output_dir: Path, step_count: int, file_name: str = None) -> Path:
     default_file_name = f"step_{step_count}_save_as_csv.csv"
-    print_plain(f"Saving DataFrame to UTF-8 CSV file: {output_dir}")
 
     if file_name is None:
         file_name = cli_input.ask_text(

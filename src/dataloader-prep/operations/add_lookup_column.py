@@ -56,15 +56,28 @@ def apply(df: pd.DataFrame, output_dir: Path, step_count: int) -> pd.DataFrame:
     print_good(f"Lookup column '{new_column_name}' added to dataset")
     null_count = df[new_column_name].isnull().sum()
     total_count = df[new_column_name].size
-    print_warning(
-        f"** Null values in '{new_column_name}': {null_count} out of {total_count} rows"
-    )
 
+    if null_count > 0:
+        print_warning(f"Null values in '{new_column_name}': {null_count} out of {total_count} rows")
+        null_mask = df[new_column_name].isnull()
+        unmatched_keys = df.loc[null_mask, target_key_column]
+        unmatched_counts = unmatched_keys.value_counts()
+        print_warning(f"Lookup NOT found for {len(unmatched_counts)} distinct key value(s):")
+        unmatched_counts = pd.DataFrame({target_key_column: unmatched_counts.index, 'Number of rows effected': unmatched_counts.values})
+        print_plain("Saving unmatched keys to CSV file")
+        save_as_csv.apply(
+            unmatched_counts,
+            output_dir,
+            step_count,
+            file_name=f"step_{step_count}_add_lookup_{new_column_name}_unmatched_keys.csv",
+        )
+
+    print_plain("Saving lookup results to CSV file")
     save_as_csv.apply(
         df,
         output_dir,
         step_count,
-        file_name=f"step_{step_count}_add_lookup_column_{new_column_name}.csv",
+        file_name=f"step_{step_count}_add_lookup_column_{new_column_name}_results.csv",
     )
     return df
 
