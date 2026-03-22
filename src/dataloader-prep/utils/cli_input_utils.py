@@ -20,13 +20,19 @@ def ask_yes_no(prompt: str, default: bool | None = None) -> bool:
 def ask_option(
     prompt: str,
     options: list[str],
+    default_index: int | None = None,
 ) -> str:
     if not options:
         raise ValueError("Options list cannot be empty.")
 
+    default = None
+    if default_index is not None and 0 <= default_index < len(options):
+        default = options[default_index]
+
     return inquirer.fuzzy(
         message=prompt,
         choices=options,
+        default=default,
     ).execute()
 
 def ask_multi_options(

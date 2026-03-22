@@ -58,10 +58,10 @@ def load_csv(file_path: str, output_dir: Path, step, encoding: str = None, show_
 
     print_plain(f"Reading CSV File: {file_path}")
 
-    if show_head is None:
-        show_head = cli_input.ask_yes_no("Show head?", default=False)
-    if show_head:
-        _show_file_head(file_path, n_lines=3, encoding=ENCODING)
+    # if show_head is None:
+    #     show_head = cli_input.ask_yes_no("Show head?", default=False)
+    # if show_head:
+    #     _show_file_head(file_path, n_lines=3, encoding=ENCODING)
 
     # Show default values and ask if user wants to update
     # keep_default_prompt = f"""

@@ -37,13 +37,20 @@ def apply(df: pd.DataFrame, output_dir: Path, step_count: int) -> pd.DataFrame:
         print_warning("Lookup source file is empty. No changes applied.")
         return df
 
+    source_df = source_df.drop(columns=['_'], errors="ignore")
+    if source_df.empty or len(source_df.columns) < 2:
+        print_warning("Lookup source has too few columns after dropping '_'. No changes applied.")
+        return df
+
     source_key_column = _read_column_name(
         source_df.columns,
         "Select lookup key column from source: ",
+        default_index=0,
     )
     source_value_column = _read_column_name(
         source_df.columns,
         "Select lookup value column from source: ",
+        default_index=len(source_df.columns) - 1,
     )
 
     lookup_series = (
@@ -82,8 +89,8 @@ def apply(df: pd.DataFrame, output_dir: Path, step_count: int) -> pd.DataFrame:
     return df
 
 
-def _read_column_name(columns: pd.Index, prompt: str) -> str:
-    return cli_input.ask_option(prompt, list(columns))
+def _read_column_name(columns: pd.Index, prompt: str, default_index: int | None = None) -> str:
+    return cli_input.ask_option(prompt, list(columns), default_index=default_index)
 
 
 def _select_lookup_file() -> Path | None:

@@ -21,4 +21,4 @@ def show_df_columns(df: pd.DataFrame) -> None:
     summary = df.describe().T
     summary['null_count'] = df[summary.index].isnull().sum()
     cols_order = ['count', 'unique', 'null_count', 'top', 'freq']
-    print(tabulate(summary[cols_order], tablefmt = 'grid', headers = cols_order, maxcolwidths=80))
+    print(tabulate(summary[cols_order], tablefmt = 'grid', headers = cols_order, maxcolwidths=75))

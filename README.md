@@ -1,6 +1,6 @@
 # Salesforce Dataloader Input Preprocessing CLI
 
-`dataloader-prep` is an interactive command-line utility for preparing CSV files before Salesforce dataloader imports. It loads your input file into a pandas dataframe, lets you run preprocessing steps interactively, and writes generated files to a timestamped output directory.
+`dataloader-prep` is an interactive command-line utility for preparing CSV and Excel files before Salesforce dataloader imports. It loads your input file into a dataframe, lets you run preprocessing steps interactively, and writes generated files to an output directory for the current run.
 
 ## What It Does
 
@@ -65,76 +65,24 @@ dataloader-prep ./data/contacts.xlsx
 
 ### Interactive Workflow
 
-When the tool starts, it:
+The tool validates the input file, loads the selected data, shows a summary, and then lets you apply operations interactively until you exit. Generated files are saved under `dataloader-prep-output/`.
 
-1. validates that the input file exists and is not empty
-2. asks for an output directory suffix
-3. creates an output folder under `dataloader-prep-output/`
-4. loads the file into memory
-5. shows a summary of the dataset
-6. lets you keep applying operations until you exit
+### Excel Files
 
-For CSV files, the tool also:
+Excel input is supported.
 
-- detects file encoding
-- lets you confirm or override the detected encoding
-- optionally shows the first few lines
-- lets you keep the default CSV parsing settings or override separator, quote character, quoting mode, and double-quote handling
-
-If malformed CSV lines are encountered while loading, they are appended to:
-
-```text
-dataloader-prep-output/<your-run-folder>/lines_unable_to_load.csv
-```
+- If Microsoft Excel is available on the machine, the CLI can use it for better workbook compatibility.
+- If Excel is not available, the tool falls back to Python-based reading.
+- For complex workbooks with formulas or formatting-dependent values, using a machine with Excel installed usually gives the best results.
 
 ## Supported Operations
 
-### Save as CSV
-
-Saves the current in-memory dataframe to a CSV file in the current run's output directory.
-
-### Show Summary
-
-Displays summary of data, like number of rows, columns and separate summary for each column
-
-### Add Lookup Column
-
-Adds a new column by matching values from a lookup source file.
-
-How it works:
-
-1. you enter the new column name
-2. you choose the key column from the current dataset
-3. you choose a source file from the `lookup/` directory
-4. you choose the lookup key column and value column from the source file
-5. the tool maps values and reports unmatched keys
-
-Generated outputs:
-
-- a results CSV with the updated dataset
-- an unmatched-keys CSV when lookup values are missing
-
-### Separate Null Values
-
-Saves rows with null values to a separate CSV file.
-
-You can choose:
-
-- rows where any column has a null value
-- rows where selected columns have null values
-
-After saving the null rows, you can continue with either:
-
-- the original dataset
-- only the remaining non-null rows
-
-### Split CSV Files and Exit
-
-Splits the current dataframe into multiple CSV files based on the number of records per file, saves them to the output directory, and then exits the CLI.
-
-### Exit
-
-Ends the interactive session without further processing.
+- `Save as CSV`: save the current dataset as CSV
+- `Show Summary`: review high-level dataset and column information
+- `Add Lookup Column`: enrich the current dataset using a lookup file
+- `Separate Null Values`: isolate rows with null values for cleanup
+- `Split CSV Files and Exit`: split the current dataset into smaller CSV files
+- `Exit`: end the session
 
 ## Lookup Files
 
@@ -152,13 +100,7 @@ project-folder/
 
 ## Output Location
 
-Each run creates a folder like:
-
-```text
-dataloader-prep-output/<suffix>_<MMDD_HHMMSS>/
-```
-
-Generated CSV files from each step are saved there.
+Each run creates a new folder under `dataloader-prep-output/`, and generated files from that run are saved there.
 
 ## Upgrade
 
@@ -179,7 +121,6 @@ pipx reinstall dataloader-prep
 ```bash
 pipx uninstall dataloader-prep
 ```
-
 ## Prepare your system
 
 ### Install Python (Skip if already installed)
@@ -241,3 +182,4 @@ Close and reopen your terminal, then verify:
 ```bash
 pipx --version
 ```
+
