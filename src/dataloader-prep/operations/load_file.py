@@ -1,3 +1,4 @@
+import sys
 import pandas as pd
 from pathlib import Path
 import csv
@@ -14,6 +15,16 @@ def apply(file_path: str, output_dir: Path) -> pd.DataFrame:
         raise ValueError(f"Unsupported file type: {file_path}")
 
 def load_xlsx(file_path: str, output_dir: Path) -> pd.DataFrame:
+    print_warning(
+        "This tool cannot evaluate formulas within Excel files. "
+        "Cells with formulas may appear as #REF!, #VALUE! instead of calculated values.\n"
+        "If your workbook has formulas: open it in Excel, wait for values to load, then Save.(Skip if already done) "
+        "That updates formula cells with their calculated values. You can then use this CLI on the saved file."
+    )
+    if not cli_input.ask_yes_no("Would you like to proceed?", default=True):
+        print_plain("Load cancelled.")
+        sys.exit(0)
+
     print_plain(f"Reading Excel File: {file_path}")
     file = pd.ExcelFile(file_path)
     sheets = file.sheet_names
