@@ -13,6 +13,7 @@ dependencies = [
   "charset-normalizer",
   "tabulate",
   "InquirerPy",
+  "xlwings",
 ]
 
 [project.scripts]

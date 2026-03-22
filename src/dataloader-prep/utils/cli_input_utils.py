@@ -24,7 +24,7 @@ def ask_option(
     if not options:
         raise ValueError("Options list cannot be empty.")
 
-    return inquirer.select(
+    return inquirer.fuzzy(
         message=prompt,
         choices=options,
     ).execute()
@@ -33,9 +33,10 @@ def ask_multi_options(
     prompt: str,
     options: list[str],
 ) -> list[str]:
-    return inquirer.checkbox(
-        message=prompt + " (Press SPACE to select, ENTER to finish)",
+    return inquirer.fuzzy(
+        message=prompt + " (Press TAB to select multiple, ENTER to confirm)",
         choices=options,
+        multiselect=True,
     ).execute()
 
 

@@ -41,10 +41,11 @@ def main():
     # Set Ouput Directory
     EXECUTION_ID=datetime.datetime.now().strftime('%m%d_%H%M%S')
     # INSERT_YOUR_CODE
-    OUTPUT_FOLDER_PREFIX = cli_input.ask_text(
-        "Enter output directory suffix for your reference (e.g. object name, Jira ticket, etc)",
-        default="task",
-    )
+    # OUTPUT_FOLDER_PREFIX = cli_input.ask_text(
+    #     "Enter output directory suffix for your reference (e.g. object name, Jira ticket, etc)",
+    #     default="task",
+    # )
+    OUTPUT_FOLDER_PREFIX = "task"
     OUTPUT_DIR = Path('dataloader-prep-output') / f"{OUTPUT_FOLDER_PREFIX}_{EXECUTION_ID}"
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     print_info(f"All the generated files will be saved in: {OUTPUT_DIR}")

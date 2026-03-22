@@ -3,3 +3,4 @@ openpyxl
 charset-normalizer
 tabulate
 InquirerPy
+xlwings
