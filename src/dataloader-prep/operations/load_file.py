@@ -111,7 +111,7 @@ def load_csv(file_path: str, output_dir: Path) -> pd.DataFrame:
 
 def _read_csv_save_bad_lines(bad_line: list[str], output_dir: Path, encoding: str) -> None:
     print_bad('Bad line Detected')
-    with open(output_dir/'lines_unable_to_load.csv', 'a', encoding=encoding) as file:
+    with open(output_dir/'step_0_lines_unable_to_load.csv', 'a', encoding=encoding) as file:
         line = ','.join(bad_line)
         file.write(line + '\n')       
 
