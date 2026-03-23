@@ -170,7 +170,7 @@ def load_excel_with_xlwings(file_path: str, selected_sheet: str, output_dir: Pat
     print_plain(f"Saving Excel File to CSV: {csv_file_path}")
     wb = app.books.open(file_path)
     wb.sheets[selected_sheet].activate()
-    app.api.Calculate()
+    #app.api.Calculate()
     wb.api.SaveAs(csv_file_path, FileFormat=62)
     wb.close()
     app.quit()
