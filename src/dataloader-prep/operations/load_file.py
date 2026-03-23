@@ -176,7 +176,7 @@ def load_excel_with_xlwings(file_path: str, selected_sheet: str, output_dir: Pat
         wb.api.SaveAs(csv_file_path, FileFormat=62)
         df = load_csv(csv_file_path, output_dir, step, encoding='utf-8-sig', show_head=False)
     else:
-        wb.save(csv_file_paths)
+        wb.save(csv_file_path)
         df = load_csv(csv_file_path, output_dir, step, encoding='utf-8', show_head=False)
     
     wb.close()
