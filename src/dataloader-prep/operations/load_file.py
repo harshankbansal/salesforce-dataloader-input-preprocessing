@@ -45,7 +45,7 @@ def load_csv(file_path: str, output_dir: Path, step, encoding: str = None, show_
     if ENCODING is None:
         print_plain('Detecting encoding...')
         with open(file_path, 'rb') as f:
-            bytes_to_read = max(10 * 1024 * 1024, os.path.getsize(file_path))
+            bytes_to_read = min(10 * 1024 * 1024, os.path.getsize(file_path))
             bytes = f.read(bytes_to_read)
         result = from_bytes(bytes).best()
         print_info(f"Detected encoding: {result.encoding}. Encoding also known as: {result.encoding_aliases}.")
