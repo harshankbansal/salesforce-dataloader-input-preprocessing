@@ -64,6 +64,14 @@ def apply(df: pd.DataFrame, output_dir: Path, step_count: int) -> pd.DataFrame:
     null_count = df[new_column_name].isnull().sum()
     total_count = df[new_column_name].size
 
+    print_plain("Saving lookup results to CSV file")
+    save_as_csv.apply(
+        df,
+        output_dir,
+        step_count,
+        file_name=f"step_{step_count}_add_lookup_column_{new_column_name}_results.csv",
+    )
+    
     if null_count > 0:
         print_warning(f"Null values in '{new_column_name}': {null_count} out of {total_count} rows")
         null_mask = df[new_column_name].isnull()
@@ -79,13 +87,24 @@ def apply(df: pd.DataFrame, output_dir: Path, step_count: int) -> pd.DataFrame:
             file_name=f"step_{step_count}_add_lookup_{new_column_name}_unmatched_keys.csv",
         )
 
-    print_plain("Saving lookup results to CSV file")
-    save_as_csv.apply(
-        df,
-        output_dir,
-        step_count,
-        file_name=f"step_{step_count}_add_lookup_column_{new_column_name}_results.csv",
-    )
+        remove_invalid_references = cli_input.ask_yes_no(
+            "Remove invalid references from data? "
+            "(Invalid reference means source key exists in current data but no matching key was found in lookup source.)",
+            default=True,
+        )
+        if remove_invalid_references:
+            index_to_drop = df.loc[null_mask].index
+            df = df.drop(index=index_to_drop)
+            print_good(f"Removed {null_count} row(s) with invalid references from current data.")
+            print_plain("Saving filtered data to CSV file")
+            save_as_csv.apply(
+                df,
+                output_dir,
+                step_count,
+                file_name=f"step_{step_count}_add_lookup_column_{new_column_name}_only_valid.csv",
+            )
+
+    
     return df
 
 
