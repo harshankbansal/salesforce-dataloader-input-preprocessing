@@ -46,7 +46,7 @@ def main():
     #     default="task",
     # )
     OUTPUT_FOLDER_PREFIX = "task"
-    OUTPUT_DIR = Path('dataloader-prep-output') / f"{OUTPUT_FOLDER_PREFIX}_{EXECUTION_ID}"
+    OUTPUT_DIR = Path('_dataloader-prep-output') / f"{OUTPUT_FOLDER_PREFIX}_{EXECUTION_ID}"
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     print_info(f"All the generated files will be saved in: {OUTPUT_DIR}")
 

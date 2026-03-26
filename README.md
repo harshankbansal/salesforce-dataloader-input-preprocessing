@@ -65,7 +65,7 @@ dataloader-prep ./data/contacts.xlsx
 
 ### Interactive Workflow
 
-The tool validates the input file, loads the selected data, shows a summary, and then lets you apply operations interactively until you exit. Generated files are saved under `dataloader-prep-output/`.
+The tool validates the input file, loads the selected data, shows a summary, and then lets you apply operations interactively until you exit. Generated files are saved under `_dataloader-prep-output/`.
 
 ### Excel Files
 
@@ -100,7 +100,7 @@ project-folder/
 
 ## Output Location
 
-Each run creates a new folder under `dataloader-prep-output/`, and generated files from that run are saved there.
+Each run creates a new folder under `_dataloader-prep-output/`, and generated files from that run are saved there.
 
 ## Upgrade
 
