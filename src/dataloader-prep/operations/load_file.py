@@ -5,7 +5,7 @@ from pathlib import Path
 import csv
 import utils.cli_input_utils as cli_input
 from utils.cli_output_utils import print_plain, print_good, print_bad, print_warning, print_info
-from charset_normalizer import from_bytes
+import charset_normalizer
 import xlwings as xw
 
 def apply(file_path: str, output_dir: Path, step: int = 0) -> pd.DataFrame:
@@ -44,10 +44,14 @@ def load_csv(file_path: str, output_dir: Path, step, encoding: str = None, show_
 
     if ENCODING is None:
         print_plain('Detecting encoding...')
-        with open(file_path, 'rb') as f:
-            bytes_to_read = min(10 * 1024 * 1024, os.path.getsize(file_path))
-            bytes = f.read(bytes_to_read)
-        result = from_bytes(bytes).best()
+        file_size = os.path.getsize(file_path)
+        for attempt in range(1, 4):
+            with open(file_path, 'rb') as f:
+                bytes_to_read = min(attempt * 10 * 1024 * 1024, file_size)
+                bytes = f.read(bytes_to_read)
+            result = charset_normalizer.from_bytes(bytes).best()
+            if (bytes_to_read == file_size) or (result is not None):
+                break
         if result is None:
             print_bad("Unable to automatically detect encoding. Please specify the encoding.")
             ENCODING = cli_input.ask_text(
