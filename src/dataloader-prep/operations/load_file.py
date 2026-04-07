@@ -48,13 +48,18 @@ def load_csv(file_path: str, output_dir: Path, step, encoding: str = None, show_
             bytes_to_read = min(10 * 1024 * 1024, os.path.getsize(file_path))
             bytes = f.read(bytes_to_read)
         result = from_bytes(bytes).best()
-        print_info(f"Detected encoding: {result.encoding}. Encoding also known as: {result.encoding_aliases}.")
-        print_warning("!!IMPORTANT!! DETECTED ENCODING MAY NOT BE CORRECT. PLEASE VERIFY THE ENCODING BEFORE USING IT.")
-        
-        ENCODING = cli_input.ask_text(
-                f"Press enter to keep detected encoding or enter the encoding you want to use",
-                default=result.encoding,
+        if result is None:
+            print_bad("No encoding detected. Please specify the encoding manually.")
+            ENCODING = cli_input.ask_text(
+                    f"Enter encoding to use to read the file"
             )
+        else:
+            print_info(f"Detected encoding: {result.encoding}. Encoding also known as: {result.encoding_aliases}.")
+            print_warning("!!IMPORTANT!! DETECTED ENCODING MAY NOT BE CORRECT. PLEASE VERIFY THE ENCODING BEFORE USING IT.")
+            ENCODING = cli_input.ask_text(
+                    f"Enter encoding to use to read the file. Press enter to keep detected encoding or type the encoding you want to use",
+                    default=result.encoding,
+                )
 
     print_plain(f"Reading CSV File: {file_path}")
 
