@@ -49,7 +49,7 @@ def load_csv(file_path: str, output_dir: Path, step, encoding: str = None, show_
             bytes = f.read(bytes_to_read)
         result = from_bytes(bytes).best()
         if result is None:
-            print_bad("No encoding detected. Please specify the encoding manually.")
+            print_bad("Unable to automatically detect encoding. Please specify the encoding.")
             ENCODING = cli_input.ask_text(
                     f"Enter encoding to use to read the file"
             )
